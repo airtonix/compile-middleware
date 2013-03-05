@@ -12,7 +12,7 @@
         "mocha": "*",
         "should": "*"
     },
-    "main": "middleware.js",
+    "main": "index.js",
     "scripts": {
         "test": "mocha -R spec"
     },

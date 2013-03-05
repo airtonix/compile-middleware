@@ -6,7 +6,7 @@ var assert = require('assert')
 
 describe('Compile-middleware', function () {
 
-    var compile = require('../middleware');
+    var compile = require('../index');
     var expected_path = null;
 
     var test = compile({
