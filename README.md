@@ -24,14 +24,15 @@ var midware = {
     filename  : function (req) { 
                   // Function obtaining filename 
                 },
-    src       : '/path/to/source',
+    src       : '/path/to/source',          // Path to source file
     render    : function (source_path, cb) {
                   // Function render file 
                 },
-    age       : 86400
+    age       : 86400                       // Optional, Default 86400
   }),
   jade: compile({
-    filename  : <RegEx>,
+    filename  : /(?!\/runtime)\/(.*).js/gi, // Capture group 1 will be used
+    src_ext   : '.jade'                     // Optional, Default ''
     src       : '/path/to/source',
     render    : function (source_path, cb) {
                   // Function rendering file
@@ -45,7 +46,8 @@ app.use(midware.jade);
 ```
 
 Either a function or Regular Expression is accepted as filename parameter.
-When using RegEx, a special capture group named as `name` should be defined.
+When using RegEx, the first capture group will be used as the name of source
+file. A suffix to filename can be defined by `src_ext`.
 
 Related Works
 -------------
