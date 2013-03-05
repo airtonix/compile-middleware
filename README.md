@@ -21,14 +21,13 @@ Usage
 var compile = require('compile-middleware');
 var midware = {
   less: compile({
-    filename  : function (req) { 
+    filename  : function (req) {            // Source filename resolve
                   // Function obtaining filename 
                 },
     src       : '/path/to/source',          // Path to source file
     render    : function (source_path, cb) {
                   // Function render file 
                 },
-    age       : 86400                       // Optional, Default 86400
   }),
   jade: compile({
     filename  : /(?!\/runtime)\/(.*).js/gi, // Capture group 1 will be used
@@ -37,7 +36,10 @@ var midware = {
     render    : function (source_path, cb) {
                   // Function rendering file
                 },
-    age       : 86400
+    headers   : {                           // Optional, HTTP Headers
+                  'Cache-Control': 'public, max-age=86400',
+                  'Content-Type': 'text/javascript' 
+                }
   })
 };
 
