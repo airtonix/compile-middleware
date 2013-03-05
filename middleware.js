@@ -45,23 +45,23 @@ var compile = function (options) {
 
         var name = filename(req);
         if(name) {
-            var path = resolve(path.join(src, name + src_ext));
-            var cache = cache[path];
-            if(cache) {
+            var file = resolve(path.join(src, name + src_ext));
+            var built = cache[file];
+            if(built) {
                 res.writeHead(200, headers);
-                res.end(cache);
+                res.end(built);
             }
-            render(path, function(err, content) {
+            render(file, function(err, content) {
                 if(err) return next(err);
-                cache = cache[path] = content;
-                if(gaze.watched().indexOf(path) === -1) {
+                built = cache[file] = content;
+                if(gaze._patterns.indexOf(file) === -1) {
                     // If not watched
-                    gaze.add(path, function () { 
+                    gaze.add(file, function () { 
                         // Gaze Added
                     });
                 }
                 res.writeHead(200, headers);
-                res.end(cache);
+                res.end(built);
             });
         }else{
             next();
