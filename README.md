@@ -30,8 +30,8 @@ var midware = {
                 },
   }),
   jade: compile({
-    filename  : /(?!\/runtime)\/(.*).js/gi, // Capture group 1 will be used
-    src_ext   : '.jade'                     // Optional, Default ''
+    filename  : /(?=\/runtime)\/(.*).js/gi, // Capture group 1 will be used
+    src_ext   : '.jade',                    // Optional, Default ''
     src       : '/path/to/source',
     render    : function (source_path, cb) {
                   // Function rendering file
