@@ -1,6 +1,5 @@
-
 var path = require('path');
-var gaze = require('gaze');
+var Gaze = require('gaze').Gaze;
 var should = require('should');
 
 var compile = function (options) {
@@ -24,7 +23,20 @@ var compile = function (options) {
     if(typeof filename != 'function')
         throw new Error('filename RegExp or function is expected');
 
-    return function (req, res, next) {
+    var resolve = path.resolve;
+    var cache = {};
+
+    // FIXME Cannot initialize Gaze without arguments
+    var gaze = new Gaze('nothing', function () {
+        
+        this.on('changed', function (path) {
+            // Remove cache file
+            delete cache[path];
+        });
+
+    }); 
+
+    var middleware = function (req, res, next) {
 
         if ('GET' != req.method.toUpperCase() && 
             'HEAD' != req.method.toUpperCase()) { 
@@ -33,15 +45,21 @@ var compile = function (options) {
 
         var name = filename(req);
         if(name) {
-            var path = compile.resolve(path.join(src, name + src_ext));
-            var cache = compile.cache[path];
+            var path = resolve(path.join(src, name + src_ext));
+            var cache = cache[path];
             if(cache) {
                 res.writeHead(200, headers);
                 res.end(cache);
             }
-            compile.render(path, function(err, content) {
+            render(path, function(err, content) {
                 if(err) return next(err);
-                cache = compile.cache[path] = content;
+                cache = cache[path] = content;
+                if(gaze.watched().indexOf(path) === -1) {
+                    // If not watched
+                    gaze.add(path, function () { 
+                        // Gaze Added
+                    });
+                }
                 res.writeHead(200, headers);
                 res.end(cache);
             });
@@ -50,10 +68,11 @@ var compile = function (options) {
         }
 
     };
+
+    middleware.close = gaze.close;
+    middleware.cache = cache;
+
+    return middleware;
 };
-
-compile.cache = {};
-
-compile.resolve = path.resolve;
 
 module.exports = compile;
