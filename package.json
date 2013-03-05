@@ -5,6 +5,9 @@
     "keywords": [ "middleware", "express", "connect", "compile", "less", "jade", "jade-browser" ],
     "author": "Trinity <imandry.c@gmail.com> (http://shinohane.com)",
     "repository": "git://github.com/hanenoshino/compile-middleware.git",
+    "dependencies": {
+        "gaze": "*"
+    },
     "devDependencies": {
         "mocha": "*",
         "should": "*"

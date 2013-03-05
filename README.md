@@ -47,9 +47,6 @@ app.use(midware.jade);
 Either a function or Regular Expression is accepted as filename parameter.
 When using RegEx, a special capture group named as `name` should be defined.
 
-**WARN** The middleware use `fs.watch` to invalidate source files. Please 
-make sure that node works on your platform.
-
 Related Works
 -------------
 
