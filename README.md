@@ -54,9 +54,9 @@ file. A suffix to filename can be defined by `src_ext`.
 Related Works
 -------------
 
-* [Compile-Middleware for Jade-Runtime](http://github.com/hanenoshino/compile-mw-jade-runtime)
+* [Compile-Middleware for Jade-Runtime](http://github.com/shinohane/compile-mw-jade-runtime)
 
-* [Compile-Middleware for LESS](http://github.com/hanenoshino/compile-mw-less)
+* [Compile-Middleware for LESS](http://github.com/shinohane/compile-mw-less)
 
 License
 -------
