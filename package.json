@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "description": "Generic Express.js/Connect middleware handling runtime compilization tasks",
     "keywords": [ "middleware", "express", "connect", "compile", "less", "jade", "jade-browser" ],
-    "author": "Trinity <imandry.c@gmail.com> (http://shinohane.com)",
+    "author": "Shinone <imandry.c@gmail.com> (http://shinohane.com)",
     "repository": "git://github.com/shinohane/compile-middleware.git",
     "dependencies": {
         "gaze": "*"
