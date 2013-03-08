@@ -50,19 +50,20 @@ var compile = function (options) {
             if(built) {
                 res.writeHead(200, headers);
                 res.end(built);
+            } else {
+                render(file, function(err, content) {
+                    if(err) return next(err);
+                    built = cache[file] = content;
+                    if(gaze._patterns.indexOf(file) === -1) {
+                        // If not watched
+                        gaze.add(file, function () { 
+                            // Gaze Added
+                        });
+                    }
+                    res.writeHead(200, headers);
+                    res.end(built);
+                });
             }
-            render(file, function(err, content) {
-                if(err) return next(err);
-                built = cache[file] = content;
-                if(gaze._patterns.indexOf(file) === -1) {
-                    // If not watched
-                    gaze.add(file, function () { 
-                        // Gaze Added
-                    });
-                }
-                res.writeHead(200, headers);
-                res.end(built);
-            });
         }else{
             next();
         }
