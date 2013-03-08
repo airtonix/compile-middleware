@@ -30,7 +30,7 @@ var midware = {
                 },
   }),
   jade: compile({
-    filename  : /(?:\/runtime\/)(.*).js/gi, // Capture group 1 will be used
+    filename  : /(?:\/runtime\/)(.*)\.js/i, // Capture group 1 will be used
     src_ext   : '.jade',                    // Optional, Default ''
     src       : '/path/to/source',
     render    : function (source_path, cb) {
@@ -50,6 +50,10 @@ app.use(midware.jade);
 Either a function or Regular Expression is accepted as filename parameter.
 When using RegEx, the first capture group will be used as the name of source
 file. A suffix to filename can be defined by `src_ext`.
+
+**WARNING** No not add a `g` flag to the RegExp, that will broke the 
+filename extraction procedure. It's an
+[V8 Issue](https://code.google.com/p/v8/issues/detail?id=778)
 
 Related Works
 -------------
