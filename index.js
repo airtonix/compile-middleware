@@ -1,6 +1,5 @@
 var path = require('path');
 var Gaze = require('gaze').Gaze;
-var should = require('should');
 
 var compile = function (options) {
     options = options || {};
