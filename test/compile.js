@@ -8,15 +8,18 @@ describe('Compile-middleware', function () {
 
     var compile = require('../index');
     var expected_path = null;
+    var include_test = false;
 
     var test = compile({
         filename  : /(?:\/runtime\/)(.*).js/i,
         src_ext   : '.jade',
         src       : 'test/',
-        render    : function (source_path, cb) {
+        render    : function (source_path, cb, depend_on) {
             // Function rendering file
             if(expected_path)
                 source_path.should.equal(expected_path);
+            if(include_test) 
+                depend_on(path.resolve(__dirname + '/include.jade'));
             setTimeout(cb.bind(this, null, "Hey!"), 1000);
         },
         headers   : {
@@ -71,6 +74,36 @@ describe('Compile-middleware', function () {
     it('should invalidate cache after source file changed', function (done) {
         var data = fs.readFileSync(expected_path);
         fs.writeFileSync(expected_path, data);
+        setTimeout(function () {
+            test.cache.should.not.have.property(expected_path);
+            done();
+        }, 200);
+    });
+
+    it('should compile and cache given a file with "include"', function () {
+        include_test = true;
+        expected_path = path.resolve(__dirname + '/chatmsg.jade');
+        test({
+            method: 'GET', 
+            path: '/runtime/chatmsg.js'
+        }, {
+            writeHead: function (code, headers) {
+                code.should.equal(200);
+                should.exist(headers);
+            },
+            end: function (data) {
+                data.should.equal('Hey!');
+                test.cache.should.have.property(expected_path);
+                test.cache[expected_path].should.equal('Hey!');
+                done();
+            }
+        },
+        should.not.invoked);
+    });
+
+    it('should invalidate cache after included file changed', function (done) {
+        var data = fs.readFileSync(path.resolve(__dirname + '/include.jade'));
+        fs.writeFileSync(path.resolve(__dirname + '/include.jade'), data);
         setTimeout(function () {
             test.cache.should.not.have.property(expected_path);
             done();
