@@ -14,6 +14,10 @@ Feature
 
   Once the source file is changed, cache is invalidated.
 
+* Dependency Supplement interface
+
+  add extra dependency files to watch
+
 Usage
 -----
 
