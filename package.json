@@ -1,6 +1,6 @@
 {
     "name": "compile-middleware",
-    "version": "0.1.2",
+    "version": "0.2.1",
     "description": "Generic Express.js/Connect middleware handling runtime compilization tasks",
     "keywords": [ "middleware", "express", "connect", "compile", "less", "jade", "jade-browser" ],
     "author": "Shinohane <imandry.c@gmail.com> (http://shinohane.com)",
