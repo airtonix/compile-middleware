@@ -25,7 +25,7 @@ var midware = {
                   // Function obtaining filename 
                 },
     src       : '/path/to/source',          // Path to source file
-    render    : function (source_path, cb) {
+    render    : function (source_path, cb, depend) {
                   // Function render file 
                 },
   }),
@@ -46,6 +46,25 @@ var midware = {
 app.use(midware.less);
 app.use(midware.jade);
 ```
+
+Render Function Arguments: 
+
+* **source_path**
+
+  path to the file to be rendered, file path be made from `src`, 
+  `filename` expression and `src_ext` parameter.
+
+* **cb**
+
+  callback function, invoke `cb(err)` on error, `cb(null, <data>)` on
+  success
+
+* **depend** (Optional)
+
+  You can add extra dependency by calling `depend("/path/to/extra/depend")`
+  or `depend(["list/of", "extra/depend", "files"])`
+
+  *The change on depended file will also invalidate the compiled cache*
 
 Either a function or Regular Expression is accepted as filename parameter.
 When using RegEx, the first capture group will be used as the name of source
