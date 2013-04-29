@@ -23,14 +23,31 @@ var compile = function (options) {
         throw new Error('filename RegExp or function is expected');
 
     var resolve = path.resolve;
+
+    // Map: Filename -> Compile Result
     var cache = {};
+
+    // Forward Map: Filename -> [ Depender ]
+    // Backward Map: Depender -> [ Filename ]
+    var dependency = {
+        forward: {},
+        backward: {},
+    };
 
     // FIXME Cannot initialize Gaze without arguments
     var gaze = new Gaze('nothing', function () {
         
-        this.on('changed', function (path) {
-            // Remove cache file
-            delete cache[path];
+        this.on('all', function (event, path) {
+            // Remove cache file delete cache[path];
+            var targets = dependency.forward[path] || [];
+            for(var i = targets.length - 1; i >= 0; i--) {
+                var target = targets[i];
+                if(dependency.backward[target].indexOf(path) == -1) {
+                    delete targets[i];
+                }else{
+                    delete cache[target];
+                }
+            }
         });
 
     }); 
@@ -50,17 +67,38 @@ var compile = function (options) {
                 res.writeHead(200, headers);
                 res.end(built);
             } else {
+                var deps = [ file ];
                 render(file, function(err, content) {
                     if(err) return next(err);
                     built = cache[file] = content;
-                    if(gaze._patterns.indexOf(file) === -1) {
-                        // If not watched
-                        gaze.add(file, function () { 
-                            // Gaze Added
-                        });
-                    }
+                    // Update backward map
+                    dependency.backward[file] = deps;
+                    deps.forEach(function (dep) {
+                        dependency.forward[dep] = dependency.forward[dep] || [];
+                        if(dependency.forward[dep].indexOf(dep) == -1) {
+                            dependency.forward[dep].push(dep);
+                        }
+                        if(gaze._patterns.indexOf(dep) === -1) {
+                            // If not watched
+                            gaze.add(dep, function () { 
+                                // Gaze Added
+                            });
+                        }
+                    });
                     res.writeHead(200, headers);
                     res.end(built);
+                }, function (dependency) {
+                    // Dependency Register
+                    if(typeof dependency == 'string') {
+                        dependency = [ dependency ];
+                    }
+                    if(Array.isArray(dependency)) {
+                        for(var dep in dependency) {
+                            if(deps.indexOf(dep) == -1) {
+                                deps.push(dep);
+                            }
+                        }
+                    } 
                 });
             }
         }else{
