@@ -10,7 +10,7 @@ describe('Compile-middleware', function () {
     var expected_path = null;
 
     var test = compile({
-        filename  : /(?:\/runtime\/)(.*).js/gi,
+        filename  : /(?:\/runtime\/)(.*).js/i,
         src_ext   : '.jade',
         src       : 'test/',
         render    : function (source_path, cb) {
