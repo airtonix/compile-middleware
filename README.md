@@ -16,7 +16,11 @@ Feature
 
 * Dependency Supplement interface
 
-  add extra dependency files to watch
+  Add extra dependency files to watch
+
+* Support JSONP request
+
+  Support request with `GET /api?callback=?`
 
 Usage
 -----
