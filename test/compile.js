@@ -14,12 +14,12 @@ describe('Compile-middleware', function () {
         filename  : /(?:\/runtime\/)(.*).js/i,
         src_ext   : '.jade',
         src       : 'test/',
-        render    : function (source_path, cb, depend_on) {
+        render    : function (source_path, cb, depend) {
             // Function rendering file
             if(expected_path)
                 source_path.should.equal(expected_path);
             if(include_test) 
-                depend_on(path.resolve(__dirname + '/include.jade'));
+                depend(path.resolve(__dirname + '/include.jade'));
             setTimeout(cb.bind(this, null, "Hey!"), 1000);
         },
         headers   : {
@@ -80,7 +80,7 @@ describe('Compile-middleware', function () {
         }, 200);
     });
 
-    it('should compile and cache given a file with "include"', function () {
+    it('should compile and cache given a file with "include"', function (done) {
         include_test = true;
         expected_path = path.resolve(__dirname + '/chatmsg.jade');
         test({
