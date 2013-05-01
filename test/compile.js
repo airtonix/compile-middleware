@@ -1,8 +1,31 @@
 
+var express = require('express');
+var request = require('supertest');
 var path = require('path');
 var should = require('should');
 var assert = require('assert')
   , AssertionError = assert.AssertionError;
+
+
+describe('express.js', function () {
+
+    before(function () {
+        app = express();
+        app.get('/', function (req, res, next) {
+            res.send(req.query.text);
+        });
+    });
+
+    var app;
+
+    it('should parse query', function (done) {
+        request(app)
+        .get('/?text=TESTTEXT')
+        .expect(200)
+        .expect('TESTTEXT')
+        .end(done);
+    });
+});
 
 describe('Compile-middleware', function () {
 
@@ -110,4 +133,25 @@ describe('Compile-middleware', function () {
         }, 200);
     });
 
+    it('should compatible with JSONP mode', function (done) {
+        include_test = true;
+        expected_path = path.resolve(__dirname + '/chatmsg.jade');
+        test({
+            method: 'GET', 
+            path: '/runtime/chatmsg.js',
+            query: {
+                callback: 'define',
+            }
+        }, {
+            writeHead: function (code, headers) {
+                code.should.equal(200);
+                should.exist(headers);
+            },
+            end: function (data) {
+                data.should.equal(';define(Hey!);');
+                done();
+            }
+        },
+        should.not.invoked);
+    });
 });
