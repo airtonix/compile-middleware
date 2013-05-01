@@ -75,8 +75,8 @@ var compile = function (options) {
                     dependency.backward[file] = deps;
                     deps.forEach(function (dep) {
                         dependency.forward[dep] = dependency.forward[dep] || [];
-                        if(dependency.forward[dep].indexOf(dep) == -1) {
-                            dependency.forward[dep].push(dep);
+                        if(dependency.forward[dep].indexOf(file) == -1) {
+                            dependency.forward[dep].push(file);
                         }
                         if(gaze._patterns.indexOf(dep) === -1) {
                             // If not watched
@@ -93,11 +93,11 @@ var compile = function (options) {
                         dependency = [ dependency ];
                     }
                     if(Array.isArray(dependency)) {
-                        for(var dep in dependency) {
+                        dependency.forEach(function (dep) {
                             if(deps.indexOf(dep) == -1) {
                                 deps.push(dep);
                             }
-                        }
+                        });
                     } 
                 });
             }
