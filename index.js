@@ -52,6 +52,15 @@ var compile = function (options) {
 
     }); 
 
+    var respond = function (req, res, data) {
+        if(req.query && req.query.callback) {
+            // JSONP request
+            res.end(';' + req.query.callback + '(' + data + ');');
+        }else{
+            res.end(data);
+        }
+    };
+
     var middleware = function (req, res, next) {
 
         if ('GET' != req.method.toUpperCase() && 
@@ -65,7 +74,7 @@ var compile = function (options) {
             var built = cache[file];
             if(built) {
                 res.writeHead(200, headers);
-                res.end(built);
+                respond(req, res, built);
             } else {
                 var deps = [ file ];
                 render(file, function(err, content) {
@@ -86,7 +95,7 @@ var compile = function (options) {
                         }
                     });
                     res.writeHead(200, headers);
-                    res.end(built);
+                    respond(req, res, built);
                 }, function (dependency) {
                     // Dependency Register
                     if(typeof dependency == 'string') {
