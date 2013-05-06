@@ -78,7 +78,15 @@ var compile = function (options) {
             } else {
                 var deps = [ file ];
                 render(file, function(err, content) {
-                    if(err) return next(err);
+                    if(err) {
+                        if('ENOENT' == err.code) {
+                            // File not found
+                            // Fallback to following middleware
+                            return next();
+                        }else{
+                            return next(err);
+                        }
+                    }
                     built = cache[file] = content;
                     // Update backward map
                     dependency.backward[file] = deps;

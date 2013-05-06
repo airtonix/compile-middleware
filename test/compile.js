@@ -7,26 +7,6 @@ var assert = require('assert')
   , AssertionError = assert.AssertionError;
 
 
-describe('express.js', function () {
-
-    before(function () {
-        app = express();
-        app.get('/', function (req, res, next) {
-            res.send(req.query.text);
-        });
-    });
-
-    var app;
-
-    it('should parse query', function (done) {
-        request(app)
-        .get('/?text=TESTTEXT')
-        .expect(200)
-        .expect('TESTTEXT')
-        .end(done);
-    });
-});
-
 describe('Compile-middleware', function () {
 
     var compile = require('../index');
@@ -154,4 +134,33 @@ describe('Compile-middleware', function () {
         },
         should.not.invoked);
     });
+
+    describe('express.js', function () {
+
+        before(function () {
+            app = express();
+            app.use(express.static(__dirname))
+            app.get('/', function (req, res, next) {
+                res.send(req.query.text);
+            });
+        });
+
+        var app;
+
+        it('should parse query', function (done) {
+            request(app)
+            .get('/?text=TESTTEXT')
+            .expect(200)
+            .expect('TESTTEXT')
+            .end(done);
+        });
+
+        it('should fallback when possible', function (done) {
+            request(app)
+            .get('/runtime/fallback.js')
+            .expect(200)
+            .end(done);
+        });
+    });
+
 });
