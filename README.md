@@ -55,6 +55,12 @@ app.use(midware.less);
 app.use(midware.jade);
 ```
 
+When render function issue an `ENOENT` error. The middleware will invoke the
+`next()` function for other middleware to execute. 
+
+_Thus, put this middleware before `express.static` middleware is recommended 
+practice._
+
 Render Function Arguments: 
 
 * **source_path**
