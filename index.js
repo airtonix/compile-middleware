@@ -53,15 +53,26 @@ var compile = function (options) {
     }); 
 
     var respond = function (req, res, data) {
-        if(req.query && req.query.callback) {
-            // JSONP request
-            res.end(';' + req.query.callback + '(' + data + ');');
+        if(data instanceof Function) {
+            // invoke the function as respond
+            data();
         }else{
-            res.end(data);
+            if(req.query && req.query.callback) {
+                // JSONP request
+                res.end(';' + req.query.callback + '(' + data + ');');
+            }else{
+                res.end(data);
+            }
         }
     };
 
+    var _next;
+    // point to current running `next()` function
+
     var middleware = function (req, res, next) {
+
+        // UGLY: hook for content fallback
+        _next = next;
 
         if ('GET' != req.method.toUpperCase() && 
             'HEAD' != req.method.toUpperCase()) { 
@@ -74,7 +85,7 @@ var compile = function (options) {
             var built = cache[file];
             if(built) {
                 res.writeHead(200, headers);
-                respond(req, res, built);
+                return respond(req, res, built);
             } else {
                 var deps = [ file ];
                 render(file, function(err, content) {
@@ -82,7 +93,9 @@ var compile = function (options) {
                         if('ENOENT' == err.code) {
                             // File not found
                             // Fallback to following middleware
-                            return next();
+                            content = function () {
+                                _next();
+                            };
                         }else{
                             return next(err);
                         }
@@ -103,7 +116,7 @@ var compile = function (options) {
                         }
                     });
                     res.writeHead(200, headers);
-                    respond(req, res, built);
+                    return respond(req, res, built);
                 }, function (dependency) {
                     // Dependency Register
                     if(typeof dependency == 'string') {
@@ -119,7 +132,7 @@ var compile = function (options) {
                 });
             }
         }else{
-            next();
+            return next();
         }
 
     };
