@@ -52,10 +52,10 @@ var compile = function (options) {
 
     }); 
 
-    var respond = function (req, res, data) {
+    var respond = function (req, res, next, data) {
         if(data instanceof Function) {
             // invoke the function as respond
-            data();
+            data(req, res, next);
         }else{
             if(req.query && req.query.callback) {
                 // JSONP request
@@ -66,13 +66,7 @@ var compile = function (options) {
         }
     };
 
-    var _next;
-    // point to current running `next()` function
-
     var middleware = function (req, res, next) {
-
-        // UGLY: hook for content fallback
-        _next = next;
 
         if ('GET' != req.method.toUpperCase() && 
             'HEAD' != req.method.toUpperCase()) { 
@@ -85,7 +79,7 @@ var compile = function (options) {
             var built = cache[file];
             if(built) {
                 res.writeHead(200, headers);
-                return respond(req, res, built);
+                return respond(req, res, next, built);
             } else {
                 var deps = [ file ];
                 render(file, function(err, content) {
@@ -93,8 +87,8 @@ var compile = function (options) {
                         if('ENOENT' == err.code) {
                             // File not found
                             // Fallback to following middleware
-                            content = function () {
-                                _next();
+                            content = function (req, res, next) {
+                                return next();
                             };
                         }else{
                             return next(err);
@@ -116,7 +110,7 @@ var compile = function (options) {
                         }
                     });
                     res.writeHead(200, headers);
-                    return respond(req, res, built);
+                    return respond(req, res, next, built);
                 }, function (dependency) {
                     // Dependency Register
                     if(typeof dependency == 'string') {
