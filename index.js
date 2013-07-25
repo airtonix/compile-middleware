@@ -57,6 +57,7 @@ var compile = function (options) {
             // invoke the function as respond
             data(req, res, next);
         }else{
+            res.writeHead(200, headers);
             if(req.query && req.query.callback) {
                 // JSONP request
                 res.end(';' + req.query.callback + '(' + data + ');');
@@ -78,7 +79,6 @@ var compile = function (options) {
             var file = resolve(path.join(src, name + src_ext));
             var built = cache[file];
             if(built) {
-                res.writeHead(200, headers);
                 return respond(req, res, next, built);
             } else {
                 var deps = [ file ];
@@ -109,7 +109,6 @@ var compile = function (options) {
                             });
                         }
                     });
-                    res.writeHead(200, headers);
                     return respond(req, res, next, built);
                 }, function (dependency) {
                     // Dependency Register
