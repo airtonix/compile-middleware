@@ -1,6 +1,8 @@
 Compile
 =======
 
+[![Build Status](https://travis-ci.org/shinohane/compile-middleware.png?branch=master)](https://travis-ci.org/shinohane/compile-middleware)
+
 Generic Express.js/Connect middleware handling runtime compilization tasks.
 
 Feature
