@@ -57,7 +57,6 @@ var compile = function (options) {
             // invoke the function as respond
             data(req, res, next);
         }else{
-            res.writeHead(200, headers);
             if(req.query && req.query.callback) {
                 // JSONP request
                 res.end(';' + req.query.callback + '(' + data + ');');
